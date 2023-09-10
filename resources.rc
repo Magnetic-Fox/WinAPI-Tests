@@ -26,6 +26,8 @@ FILETYPE 0x1L
     END
 }
 
+IDI_ICON1   ICON    "icon1.ico"
+
 IDR_MENU1 MENU
 BEGIN
     POPUP "&Plik"

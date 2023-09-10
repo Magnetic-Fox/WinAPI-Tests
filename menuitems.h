@@ -7,4 +7,6 @@
 #define ID_PLIK_ZAKONCZ 100
 #define ID_POMOC_O      101
 
+#define IDI_ICON1       10
+
 #endif
