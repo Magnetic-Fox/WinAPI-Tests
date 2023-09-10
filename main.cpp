@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <stdlib.h>
 
+#include "menuitems.h"
+
 #define BST_UNCHECKED       0x0000
 #define BST_CHECKED         0x0001
 
@@ -41,10 +43,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
+    HMENU hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(200));
+
     HWND hwnd;
 
     hwnd = CreateWindow(NazwaKlasy, "Oto okienko", WS_OVERLAPPEDWINDOW, 20, 20, 640, 480,
-                        NULL, NULL, hInstance, NULL);
+                        NULL, hMenu, hInstance, NULL);
 
     if(hwnd == NULL)
     {
@@ -81,7 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     SetWindowText(hStatic, "Test 2");
 
-    for(unsigned int x=0; x<1000; ++x)
+    for(unsigned long int x=0; x<65537; ++x)
     {
         char test[10];
         ltoa(x,test,10);
@@ -111,6 +115,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_COMMAND:
             switch(wParam)
             {
+                case ID_PLIK_ZAKONCZ:
+                    PostQuitMessage(0);
+                    break;
                 case ID_PRZYCISK1:
                     // Odczyt danych z pola tekstowego
                     DWORD dlugosc = GetWindowTextLength(hText);
@@ -122,11 +129,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 case ID_PRZYCISK2:
                     if(IsDlgButtonChecked(hwnd, ID_CHECKBOX))
                     {
-                        MessageBox(0,"Zaznaczony!","Stan",MB_ICONINFORMATION);
+                        MessageBox(hwnd,"Zaznaczony!","Stan",MB_ICONINFORMATION);
                     }
                     else
                     {
-                        MessageBox(0,"Niezaznaczony!","Stan",MB_ICONINFORMATION);
+                        MessageBox(hwnd,"Niezaznaczony!","Stan",MB_ICONINFORMATION);
                     }
                     break;
                 case ID_CHECKBOX:
@@ -143,7 +150,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     long int index=SendMessage(hListBox, LB_GETCURSEL, 0, 0);
                     char test[10];
                     ltoa(index,test,10);
-                    MessageBox(0,test,"Wartoœæ",MB_OK);
+                    MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                     break;
                 case ID_LISTBOX:
                     if(HIWORD(lParam)==LBN_DBLCLK)
@@ -151,7 +158,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         long int index=SendMessage(hListBox, LB_GETCURSEL, 0, 0);
                         char test[10];
                         ltoa(index,test,10);
-                        MessageBox(0,test,"Wartoœæ",MB_OK);
+                        MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                     }
                     break;
             }
