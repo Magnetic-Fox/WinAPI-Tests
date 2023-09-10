@@ -14,7 +14,7 @@ FILETYPE 0x1L
             VALUE "FileDescription", "Testy WinAPI\0"
             VALUE "InternalName", "WinAPI_test.exe\0"
             VALUE "LegalCopyright", "©2023 Magnetic-Fox\0"
-            // VALUE "LegalTrademarks", ""
+            VALUE "LegalTrademarks", "WinAPI™\0"
             VALUE "OriginalFilename", "WinAPI_test.exe\0"
             VALUE "ProductName", "Testy WinAPI\0"
             VALUE "ProductVersion", "1.0\0"
