@@ -3,6 +3,11 @@
 *.lk1
 *.map
 *.err
+*.sym
+*.aps
+
+# Compiled resources
+*.res
 
 # Prerequisites
 *.d
