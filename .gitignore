@@ -4,6 +4,8 @@
 *.map
 *.err
 *.sym
+
+# Yet another files
 *.aps
 
 # Compiled resources
