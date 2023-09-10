@@ -1,0 +1,13 @@
+#include "menuitems.h"
+
+IDR_MENU1 MENU
+BEGIN
+    POPUP "&Plik"
+    BEGIN
+        MENUITEM "Za&koñcz\tAlt+F4", ID_PLIK_ZAKONCZ
+    END
+    POPUP "Pomo&c"
+    BEGIN
+        MENUITEM "&O programie", ID_POMOC_O
+    END
+END
