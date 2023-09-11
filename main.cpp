@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <ctl3d.h>
 #include <stdlib.h>
 
 #include "menuitems.h"
@@ -14,10 +15,21 @@
 #define ID_EDITBOX      506
 #define ID_LISTBOX2     507
 
-HWND hText;
+HWND hText, hText2;
 HWND hListBox, hListBox2;
+HWND hStatic2;
+
+// HBRUSH g_hBrush = CreateSolidBrush(RGB(255,255,0));
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+void ShowInteger(long int integer)
+{
+    char test[20];
+    ltoa(integer,test,10);
+    MessageBox(0,test,"ShowInteger",MB_OK);
+    return;
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -39,7 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     if(!RegisterClass(&wc))
     {
-        MessageBox(NULL,"Nie uda³o siê utworzyæ okna.","B³¹d",MB_ICONEXCLAMATION | MB_OK);
+        MessageBox(NULL,"Nie uda³o siê utworzyæ okna.","B³¹d",MB_ICONSTOP | MB_OK);
         return 1;
     }
 
@@ -47,12 +59,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     HWND hwnd;
 
-    hwnd = CreateWindow(NazwaKlasy, "Oto okienko", WS_OVERLAPPEDWINDOW, 20, 20, 640, 480,
+    hwnd = CreateWindow(NazwaKlasy, "Oto okienko", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
                         NULL, hMenu, hInstance, NULL);
 
     if(hwnd == NULL)
     {
-        MessageBox(NULL,"Nie uda³o siê wyœwietliæ okna.","B³¹d",MB_ICONEXCLAMATION | MB_OK);
+        MessageBox(NULL,"Nie uda³o siê wyœwietliæ okna.","B³¹d",MB_ICONSTOP | MB_OK);
         return 1;
     }
 
@@ -83,9 +95,46 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     hListBox2 =CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | ES_AUTOVSCROLL | LBS_NOTIFY,
                             320, 155, 150, 150, hwnd, (HMENU)ID_LISTBOX2, hInstance, NULL);
 
+    hStatic2 =CreateWindow("STATIC", "0", WS_CHILD | WS_VISIBLE | SS_LEFT, 480, 5, 150, 205, hwnd, NULL, hInstance, NULL);
+
+    hText2 =CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | CBS_DROPDOWNLIST | CBS_HASSTRINGS /*WS_TABSTOP | ES_PASSWORD | ES_AUTOHSCROLL*/,
+                         320, 310, 150, 124, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
+
+    SendMessage(hText2, CB_ADDSTRING, 0, (LPARAM) "Test 1");
+    SendMessage(hText2, CB_ADDSTRING, 0, (LPARAM) "Test 2");
+
+    //SendMessage(hText2, EM_SETPASSWORDCHAR, 0x95, 0);
+
+    if(Ctl3dRegister(hInstance) && Ctl3dEnabled())
+    {
+        //unsigned int ctlRegs=(CTL3D_ALL) & ~(CTL3D_BUTTONS);
+        unsigned int ctlRegs=CTL3D_ALL;
+        Ctl3dSubclassDlg(hwnd,ctlRegs);
+
+        HDC hDC=GetWindowDC(hPrzycisk);
+        SetBkMode(hDC, TRANSPARENT);
+        
+        /*
+        Ctl3dSubclassCtl(hPrzycisk);
+        Ctl3dSubclassCtl(hPrzycisk2);
+        Ctl3dSubclassCtl(hPrzycisk3);
+        
+        Ctl3dSubclassCtl(hText);
+        Ctl3dSubclassCtl(hCheckBox);
+        Ctl3dSubclassCtl(hListBox);
+        Ctl3dSubclassCtl(hListBox2);
+        Ctl3dSubclassCtl(hText2);
+        */
+        //Ctl3dAutoSubclass(hInstance);
+    }
+    else
+    {
+        MessageBox(hwnd,"Zarejestrowanie CTL3D nie powiod³o siê!","Ostrze¿enie",MB_ICONEXCLAMATION);
+    }
+
     SetWindowText(hStatic, "Test 2");
 
-    for(unsigned long int x=0; x<65537; ++x)
+    for(unsigned long int x=0; x<65536; ++x)
     {
         char test[10];
         ltoa(x,test,10);
@@ -112,11 +161,32 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch(msg)
     {
+        case WM_CTLCOLOR:
+            switch(HIWORD(lParam))
+            {
+                /*
+                case CTLCOLOR_STATIC:
+                    HWND hCtl = (HWND)LOWORD(lParam);
+                    HDC hDC = (HDC)wParam;
+                    if(hCtl == hStatic2)
+                    {
+                        SetBkMode(hDC, TRANSPARENT);
+                        return (LRESULT) g_hBrush;
+                    }
+                    
+                    break;
+                */
+                case CTLCOLOR_BTN:
+                    SetBkMode((HDC)wParam, TRANSPARENT);
+                    break;
+            }
+            break;
         case WM_COMMAND:
             switch(wParam)
             {
                 case ID_PLIK_ZAKONCZ:
-                    PostQuitMessage(0);
+                    DestroyWindow(hwnd);
+                    //PostQuitMessage(0);
                     break;
                 case ID_PRZYCISK1:
                     // Odczyt danych z pola tekstowego
@@ -159,6 +229,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         char test[10];
                         ltoa(index,test,10);
                         MessageBox(hwnd,test,"Wartoœæ",MB_OK);
+                        // ShowInteger(index);
+                    }
+                    if(HIWORD(lParam)==LBN_SELCHANGE)
+                    {
+                        long int index=SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+                        char test[10];
+                        ltoa(index,test,10);
+                        SetWindowText(hStatic2,test);
+                        // MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                     }
                     break;
             }
@@ -167,6 +246,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hwnd);
             break;
         case WM_DESTROY:
+            if(Ctl3dEnabled() && (!Ctl3dUnregister(GetWindowWord(hwnd,GWW_HINSTANCE))))
+            {
+                MessageBox(0,"Wyrejestrowanie aplikacji z CTL3D nie powiod³o siê!","Ostrze¿enie",MB_ICONEXCLAMATION);
+            }
             PostQuitMessage(0);
             break;
         default:
