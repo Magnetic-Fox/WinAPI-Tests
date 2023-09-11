@@ -14,10 +14,12 @@
 #define ID_PRZYCISK3    505
 #define ID_EDITBOX      506
 #define ID_LISTBOX2     507
+#define ID_PRZYCISK4    508
 
 HWND hText, hText2;
 HWND hListBox, hListBox2;
 HWND hStatic2;
+HWND hLast;
 
 // HBRUSH g_hBrush = CreateSolidBrush(RGB(255,255,0));
 
@@ -68,40 +70,45 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HWND hPrzycisk, hPrzycisk2, hPrzycisk3;
+    HWND hPrzycisk, hPrzycisk2, hPrzycisk3, hPrzycisk4;
     HWND hCheckBox;
     HWND hStatic;
     
-    hPrzycisk = CreateWindow("BUTTON", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE, 160, 5, 150, 30,
+    hPrzycisk = CreateWindow("BUTTON", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 5, 150, 30,
                              hwnd, (HMENU)ID_PRZYCISK1, hInstance, NULL);
 
-    hPrzycisk2 =CreateWindow("BUTTON", "Wyœwietl stan", WS_CHILD | WS_VISIBLE, 160, 35, 150, 30,
+    hPrzycisk2 =CreateWindow("BUTTON", "Wyœwietl stan", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 35, 150, 30,
                              hwnd, (HMENU)ID_PRZYCISK2, hInstance, NULL);
 
-    hPrzycisk3 =CreateWindow("BUTTON", "Wyœwietl wybrany", WS_CHILD | WS_VISIBLE, 160, 65, 150, 30,
+    hPrzycisk3 =CreateWindow("BUTTON", "Wyœwietl wybrany", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 65, 150, 30,
                              hwnd, (HMENU)ID_PRZYCISK3, hInstance, NULL);
 
-    hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL,
+    hPrzycisk4 =CreateWindow("BUTTON", "Testowy", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 95, 150, 30,
+                             hwnd, (HMENU)ID_PRZYCISK4, hInstance, NULL);
+
+    hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
                          5, 5, 150, 150, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
 
-    hCheckBox = CreateWindow("BUTTON", "Opcja", WS_CHILD | WS_VISIBLE | BS_CHECKBOX, 5, 165, 150, 30,
+    hCheckBox = CreateWindow("BUTTON", "Opcja", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_CHECKBOX, 5, 165, 150, 30,
                              hwnd, (HMENU)ID_CHECKBOX, hInstance, NULL);
 
     hStatic = CreateWindow("STATIC", "Test", WS_CHILD | WS_VISIBLE | SS_LEFT, 5, 195, 150, 205, hwnd, NULL, hInstance, NULL);
 
-    hListBox = CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | ES_AUTOVSCROLL | LBS_NOTIFY,
+    hListBox = CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_AUTOVSCROLL | LBS_NOTIFY,
                             320, 5, 150, 150, hwnd, (HMENU)ID_LISTBOX, hInstance, NULL);
 
-    hListBox2 =CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | ES_AUTOVSCROLL | LBS_NOTIFY,
+    hListBox2 =CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_AUTOVSCROLL | LBS_NOTIFY,
                             320, 155, 150, 150, hwnd, (HMENU)ID_LISTBOX2, hInstance, NULL);
 
     hStatic2 =CreateWindow("STATIC", "0", WS_CHILD | WS_VISIBLE | SS_LEFT, 480, 5, 150, 205, hwnd, NULL, hInstance, NULL);
 
-    hText2 =CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | CBS_DROPDOWNLIST | CBS_HASSTRINGS /*WS_TABSTOP | ES_PASSWORD | ES_AUTOHSCROLL*/,
+    hText2 =CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | CBS_DROPDOWNLIST | CBS_HASSTRINGS /*WS_TABSTOP | ES_PASSWORD | ES_AUTOHSCROLL*/,
                          320, 310, 150, 124, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
 
     SendMessage(hText2, CB_ADDSTRING, 0, (LPARAM) "Test 1");
     SendMessage(hText2, CB_ADDSTRING, 0, (LPARAM) "Test 2");
+
+    hLast=hwnd;
 
     //SendMessage(hText2, EM_SETPASSWORDCHAR, 0x95, 0);
 
@@ -146,12 +153,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     ShowWindow(hwnd,nCmdShow);
     UpdateWindow(hwnd);
 
+    HACCEL hAccel=LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATORS));
+    if(!hAccel)
+    {
+        MessageBox(0,"","B³¹d",0);
+    }
+
     MSG Komunikat;
 
     while(GetMessage(&Komunikat, NULL, 0, 0 ))
     {
-        TranslateMessage(&Komunikat);
-        DispatchMessage(&Komunikat);
+        if(!TranslateAccelerator(hwnd, hAccel, &Komunikat))
+        {
+            TranslateMessage(&Komunikat);
+            DispatchMessage(&Komunikat);
+        }
     }
     
     return 0;
@@ -184,6 +200,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_COMMAND:
             switch(wParam)
             {
+                case ID_ACC_TAB:
+                    hLast=GetNextDlgTabItem(hwnd,hLast,false);
+                    SetFocus(hLast);
+                    break;
                 case ID_PLIK_ZAKONCZ:
                     DestroyWindow(hwnd);
                     //PostQuitMessage(0);
@@ -239,6 +259,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         SetWindowText(hStatic2,test);
                         // MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                     }
+                    break;
+                case ID_PRZYCISK4:
+                    SetFocus(GetNextDlgTabItem(hwnd,LOWORD(lParam),false));
                     break;
             }
             break;

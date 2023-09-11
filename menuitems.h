@@ -9,4 +9,7 @@
 
 #define IDI_ICON1       10
 
+#define IDR_ACCELERATORS    20
+#define ID_ACC_TAB          21
+
 #endif
