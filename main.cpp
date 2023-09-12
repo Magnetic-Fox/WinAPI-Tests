@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <ctl3d.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "menuitems.h"
 
@@ -15,11 +16,13 @@
 #define ID_EDITBOX      506
 #define ID_LISTBOX2     507
 #define ID_PRZYCISK4    508
+#define ID_COMBOBOX     509
+#define ID_EDITBOX2     510
 
 HWND hText, hText2;
 HWND hListBox, hListBox2;
 HWND hStatic2;
-HWND hLast;
+HWND hCombo;
 
 // HBRUSH g_hBrush = CreateSolidBrush(RGB(255,255,0));
 
@@ -102,15 +105,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hStatic2 =CreateWindow("STATIC", "0", WS_CHILD | WS_VISIBLE | SS_LEFT, 480, 5, 150, 205, hwnd, NULL, hInstance, NULL);
 
-    hText2 =CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | CBS_DROPDOWNLIST | CBS_HASSTRINGS /*WS_TABSTOP | ES_PASSWORD | ES_AUTOHSCROLL*/,
-                         320, 310, 150, 124, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
+    hText2 =CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_PASSWORD | ES_AUTOHSCROLL,
+                         320, 310, 150, 24, hwnd, (HMENU)ID_EDITBOX2, hInstance, NULL);
 
-    SendMessage(hText2, CB_ADDSTRING, 0, (LPARAM) "Test 1");
-    SendMessage(hText2, CB_ADDSTRING, 0, (LPARAM) "Test 2");
+    hCombo =CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | CBS_DROPDOWNLIST | CBS_HASSTRINGS,
+                         320, 344, 150, 124, hwnd, (HMENU)ID_COMBOBOX, hInstance, NULL);
 
-    hLast=hwnd;
+    SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 1");
+    SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 2");
 
-    //SendMessage(hText2, EM_SETPASSWORDCHAR, 0x95, 0);
+    SendMessage(hText2, EM_SETPASSWORDCHAR, 0x95, 0);
 
     if(Ctl3dRegister(hInstance) && Ctl3dEnabled())
     {
@@ -156,7 +160,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     HACCEL hAccel=LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATORS));
     if(!hAccel)
     {
-        MessageBox(0,"","B³¹d",0);
+        MessageBox(0,"Nie uda³o siê za³adowaæ akceleratorów!","B³¹d",0);
     }
 
     MSG Komunikat;
@@ -201,8 +205,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             switch(wParam)
             {
                 case ID_ACC_TAB:
-                    hLast=GetNextDlgTabItem(hwnd,hLast,false);
-                    SetFocus(hLast);
+                    /*
+                    char testClass[5];
+                    GetClassName(GetFocus(),testClass,5);
+                    if(strcasecmp(testClass,"EDIT")==0)
+                    */
+                    if(GetFocus()==hText)
+                    {
+                        SendMessage(GetFocus(), WM_CHAR, VK_TAB, 0);
+                    }
+                    else
+                    {
+                        SetFocus(GetNextDlgTabItem(hwnd,GetFocus(),false));
+                    }
                     break;
                 case ID_PLIK_ZAKONCZ:
                     DestroyWindow(hwnd);
@@ -261,7 +276,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                     break;
                 case ID_PRZYCISK4:
-                    SetFocus(GetNextDlgTabItem(hwnd,LOWORD(lParam),false));
+                    //SetFocus(GetNextDlgTabItem(hwnd,LOWORD(lParam),false));
                     break;
             }
             break;
