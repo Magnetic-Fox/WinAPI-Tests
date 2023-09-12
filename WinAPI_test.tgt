@@ -46,8 +46,8 @@ WString
 1
 12
 WString
-5
-ctl3d
+13
+ctl3d winsock
 0
 13
 WVList
@@ -125,7 +125,7 @@ WVList
 30
 MItem
 11
-menuitems.h
+resources.h
 31
 WString
 3

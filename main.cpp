@@ -2,8 +2,9 @@
 #include <ctl3d.h>
 #include <stdlib.h>
 #include <string.h>
+#include "stddef.h"
 
-#include "menuitems.h"
+#include "resources.h"
 
 #define BST_UNCHECKED       0x0000
 #define BST_CHECKED         0x0001
@@ -27,6 +28,7 @@ HWND hCombo;
 // HBRUSH g_hBrush = CreateSolidBrush(RGB(255,255,0));
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+BOOL _export FAR PASCAL DlgProc(HWND, UINT, WPARAM, LPARAM);
 
 void ShowInteger(long int integer)
 {
@@ -276,7 +278,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                     break;
                 case ID_PRZYCISK4:
-                    //SetFocus(GetNextDlgTabItem(hwnd,LOWORD(lParam),false));
+                    HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
+                    FARPROC proc=MakeProcInstance((FARPROC)DlgProc, instHandle);
+                    int ret=DialogBox(instHandle, MAKEINTRESOURCE(IDD_DIALOG1), hwnd, (DLGPROC)proc);
+                    ShowInteger(ret);
                     break;
             }
             break;
@@ -294,4 +299,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return DefWindowProc(hwnd,msg,wParam,lParam);
     }
     return 0;
+}
+
+BOOL _export FAR PASCAL DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch(msg)
+    {
+        case WM_INITDIALOG:
+            break;
+        case WM_COMMAND:
+            switch(wParam)
+            {
+                case IDOK:
+                    EndDialog(hwnd,IDOK);
+                    break;
+                case IDCANCEL:
+                    EndDialog(hwnd,IDCANCEL);
+                    break;
+            }
+            break;
+        default:
+            return FALSE;
+    }
+    return TRUE;
 }
