@@ -38,6 +38,13 @@ void ShowInteger(long int integer)
     return;
 }
 
+long int inline MakeDialogBox(HWND hwnd, unsigned int type, void *x)
+{
+    HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
+    FARPROC proc=MakeProcInstance((FARPROC)x, instHandle);
+    return DialogBox(instHandle, MAKEINTRESOURCE(type), hwnd, (DLGPROC)proc);
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     // MessageBox(NULL,"Fender!","Test",MB_ICONINFORMATION | MB_OK);
@@ -225,6 +232,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     DestroyWindow(hwnd);
                     //PostQuitMessage(0);
                     break;
+                case ID_POMOC_O:
+                    MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc);
+                    break;
                 case ID_PRZYCISK1:
                     // Odczyt danych z pola tekstowego
                     DWORD dlugosc = GetWindowTextLength(hText);
@@ -278,10 +288,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                     break;
                 case ID_PRZYCISK4:
+                /*
                     HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
                     FARPROC proc=MakeProcInstance((FARPROC)DlgProc, instHandle);
                     int ret=DialogBox(instHandle, MAKEINTRESOURCE(IDD_DIALOG1), hwnd, (DLGPROC)proc);
                     ShowInteger(ret);
+                */
+                    ShowInteger(MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc));
                     break;
             }
             break;
