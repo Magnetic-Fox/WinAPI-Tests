@@ -15,5 +15,7 @@
 
 #define IDR_ACCELERATORS                20
 #define ID_ACC_TAB                      21
+#define ID_ACC_ALTF4                    22
+#define ID_ACC_F1                       23
 
 #endif

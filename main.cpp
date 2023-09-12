@@ -2,6 +2,7 @@
 #include <ctl3d.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 #include "resources.h"
 
@@ -24,16 +25,17 @@ HWND hListBox, hListBox2;
 HWND hStatic2;
 HWND hCombo;
 
-HHOOK hMyHook=NULL;
+char buffer[65536];
 
-FARPROC proc=NULL;
+HBRUSH g_hBrush = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
 
-// HBRUSH g_hBrush = CreateSolidBrush(RGB(255,255,0));
+//HHOOK hMyHook=NULL;
+// FARPROC proc=NULL;
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 // BOOL _export FAR PASCAL DlgProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK ReturnProc(int, WPARAM, LPARAM);
+// LRESULT CALLBACK ReturnProc(int, WPARAM, LPARAM);
 
 void ShowInteger(long int integer)
 {
@@ -52,19 +54,19 @@ long int inline MakeDialogBox(HWND hwnd, unsigned int type, void* procedure)
     FreeProcInstance(proc);
     return result;
 }
-
+/*
 HHOOK inline MakeSetWindowsHook(HWND hwnd, FARPROC &proc, int hookType, void* procedure)
 {
     HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
     proc=MakeProcInstance((FARPROC)procedure, instHandle);
     return (HHOOK)(int)SetWindowsHook(hookType, (HOOKPROC)proc);
 }
-
+*/
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     // MessageBox(NULL,"Fender!","Test",MB_ICONINFORMATION | MB_OK);
 
-    WNDCLASS wc;
+    WNDCLASS wc = { 0 };
     LPSTR NazwaKlasy = "Klasa Okienka";
 
     wc.style = 0;
@@ -74,8 +76,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wc.hInstance = hInstance;
     wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wc.lpszMenuName = NULL;
+    // wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hbrBackground = g_hBrush;
+    wc.lpszMenuName = /*NULL*/ MAKEINTRESOURCE(IDR_MENU1);
     wc.lpszClassName = NazwaKlasy;
 
     if(!RegisterClass(&wc))
@@ -84,12 +87,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HMENU hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MENU1));
+    //HMENU hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MENU1));
 
     HWND hwnd;
 
     hwnd = CreateWindow(NazwaKlasy, "Oto okienko", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
-                        NULL, hMenu, hInstance, NULL);
+                        NULL, /*hMenu*/NULL, hInstance, NULL);
+
+    for(unsigned long int x=0; x<65536; ++x)
+    {
+        buffer[x]=x%256;
+    }
 
     if(hwnd == NULL)
     {
@@ -119,15 +127,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     hCheckBox = CreateWindow("BUTTON", "Opcja", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_CHECKBOX, 5, 165, 150, 30,
                              hwnd, (HMENU)ID_CHECKBOX, hInstance, NULL);
 
-    hStatic = CreateWindow("STATIC", "Test", WS_CHILD | WS_VISIBLE | SS_LEFT, 5, 195, 150, 205, hwnd, NULL, hInstance, NULL);
+    hStatic = CreateWindow("STATIC", "Test", WS_CHILD | WS_VISIBLE | SS_LEFT, 5, 195, 150, 16, hwnd, NULL, hInstance, NULL);
 
-    hListBox = CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_AUTOVSCROLL | LBS_NOTIFY,
+    hListBox = CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_AUTOVSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
                             320, 5, 150, 150, hwnd, (HMENU)ID_LISTBOX, hInstance, NULL);
+
+    SetWindowPos(hListBox,NULL,320,5,150,150,SWP_NOZORDER);
 
     hListBox2 =CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_AUTOVSCROLL | LBS_NOTIFY,
                             320, 155, 150, 150, hwnd, (HMENU)ID_LISTBOX2, hInstance, NULL);
 
-    hStatic2 =CreateWindow("STATIC", "0", WS_CHILD | WS_VISIBLE | SS_LEFT, 480, 5, 150, 205, hwnd, NULL, hInstance, NULL);
+    SetWindowPos(hListBox2,NULL,320,155,150,150,SWP_NOZORDER);
+
+    hStatic2 =CreateWindow("STATIC", "0", WS_CHILD | WS_VISIBLE | SS_LEFT, 480, 5, 150, 16, hwnd, NULL, hInstance, NULL);
 
     hText2 =CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_PASSWORD | ES_AUTOHSCROLL,
                          320, 310, 150, 24, hwnd, (HMENU)ID_EDITBOX2, hInstance, NULL);
@@ -138,6 +150,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 1");
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 2");
 
+    std::string testowy="Eksperyment";
+
+    SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)testowy.c_str());
+
     SendMessage(hText2, EM_SETPASSWORDCHAR, 0x95, 0);
 
     if(Ctl3dRegister(hInstance) && Ctl3dEnabled())
@@ -145,9 +161,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         //unsigned int ctlRegs=(CTL3D_ALL) & ~(CTL3D_BUTTONS);
         unsigned int ctlRegs=CTL3D_ALL;
         Ctl3dSubclassDlg(hwnd,ctlRegs);
-
-        HDC hDC=GetWindowDC(hPrzycisk);
-        SetBkMode(hDC, TRANSPARENT);
         
         /*
         Ctl3dSubclassCtl(hPrzycisk);
@@ -178,7 +191,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     SendMessage(hListBox2, LB_ADDSTRING, 0, (LPARAM) "xD");
 
-    hMyHook=MakeSetWindowsHook(hwnd,proc,WH_KEYBOARD,ReturnProc);
+    // hMyHook=MakeSetWindowsHook(hwnd,proc,WH_KEYBOARD,ReturnProc);
 
     ShowWindow(hwnd,nCmdShow);
     UpdateWindow(hwnd);
@@ -222,6 +235,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     
                     break;
                 */
+                case CTLCOLOR_STATIC:
+                    SetBkMode((HDC)wParam, TRANSPARENT);
+                    return g_hBrush;
+                    // break;
                 case CTLCOLOR_BTN:
                     SetBkMode((HDC)wParam, TRANSPARENT);
                     break;
@@ -244,6 +261,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     {
                         SetFocus(GetNextDlgTabItem(hwnd,GetFocus(),false));
                     }
+                    break;
+                case ID_ACC_ALTF4:
+                    SendMessage(hwnd, WM_CLOSE, 0, 0);
+                    break;
+                case ID_ACC_F1:
+                    MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc);
                     break;
                 case ID_PLIK_ZAKONCZ:
                     DestroyWindow(hwnd);
@@ -315,6 +338,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     break;
             }
             break;
+            
+        case WM_SIZE:
+            unsigned long int width= LOWORD(lParam);
+            unsigned long int height=HIWORD(lParam);
+            
+            SetWindowPos(hListBox,NULL,0,0,width-482,height-276,SWP_NOMOVE | SWP_NOZORDER);
+            
+            break;
+            
         case WM_CLOSE:
             DestroyWindow(hwnd);
             break;
@@ -323,6 +355,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 MessageBox(0,"Wyrejestrowanie aplikacji z CTL3D nie powiod³o siê!","Ostrze¿enie",MB_ICONEXCLAMATION);
             }
+            /*
             if(hMyHook!=NULL)
             {
                 MessageBox(0,"Hook","",0);
@@ -336,6 +369,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 MessageBox(0,"Proc","",0);
                 FreeProcInstance(proc);
             }
+            */
+            DeleteObject(g_hBrush);
             PostQuitMessage(0);
             break;
         default:
@@ -350,6 +385,19 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     switch(msg)
     {
         case WM_INITDIALOG:
+            if(Ctl3dEnabled())
+            {
+                unsigned int ctlRegs=CTL3D_ALL;
+                Ctl3dSubclassDlg(hwnd,ctlRegs);
+            }
+            break;
+        case WM_CTLCOLOR:
+            switch(HIWORD(lParam))
+            {
+                case CTLCOLOR_BTN:
+                    SetBkMode((HDC)wParam, TRANSPARENT);
+                    break;
+            }
             break;
         case WM_COMMAND:
             switch(wParam)
@@ -367,7 +415,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     return TRUE;
 }
-
+/*
 LRESULT CALLBACK ReturnProc(int code, WPARAM wParam, LPARAM lParam)
 {
     if(code<0)
@@ -383,3 +431,4 @@ LRESULT CALLBACK ReturnProc(int code, WPARAM wParam, LPARAM lParam)
     }
     return CallNextHookEx(0,code,wParam,lParam);
 }
+*/
