@@ -2,7 +2,6 @@
 #include <ctl3d.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stddef.h"
 
 #include "resources.h"
 
@@ -25,10 +24,16 @@ HWND hListBox, hListBox2;
 HWND hStatic2;
 HWND hCombo;
 
+HHOOK hMyHook=NULL;
+
+FARPROC proc=NULL;
+
 // HBRUSH g_hBrush = CreateSolidBrush(RGB(255,255,0));
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-BOOL _export FAR PASCAL DlgProc(HWND, UINT, WPARAM, LPARAM);
+// BOOL _export FAR PASCAL DlgProc(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK ReturnProc(int, WPARAM, LPARAM);
 
 void ShowInteger(long int integer)
 {
@@ -38,11 +43,21 @@ void ShowInteger(long int integer)
     return;
 }
 
-long int inline MakeDialogBox(HWND hwnd, unsigned int type, void *x)
+long int inline MakeDialogBox(HWND hwnd, unsigned int type, void* procedure)
+{
+    long int result;
+    HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
+    FARPROC proc=MakeProcInstance((FARPROC)procedure, instHandle);
+    result=DialogBox(instHandle, MAKEINTRESOURCE(type), hwnd, (DLGPROC)proc);
+    FreeProcInstance(proc);
+    return result;
+}
+
+HHOOK inline MakeSetWindowsHook(HWND hwnd, FARPROC &proc, int hookType, void* procedure)
 {
     HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
-    FARPROC proc=MakeProcInstance((FARPROC)x, instHandle);
-    return DialogBox(instHandle, MAKEINTRESOURCE(type), hwnd, (DLGPROC)proc);
+    proc=MakeProcInstance((FARPROC)procedure, instHandle);
+    return (HHOOK)(int)SetWindowsHook(hookType, (HOOKPROC)proc);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -69,7 +84,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HMENU hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(200));
+    HMENU hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MENU1));
 
     HWND hwnd;
 
@@ -162,6 +177,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
     SendMessage(hListBox2, LB_ADDSTRING, 0, (LPARAM) "xD");
+
+    hMyHook=MakeSetWindowsHook(hwnd,proc,WH_KEYBOARD,ReturnProc);
 
     ShowWindow(hwnd,nCmdShow);
     UpdateWindow(hwnd);
@@ -306,6 +323,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 MessageBox(0,"Wyrejestrowanie aplikacji z CTL3D nie powiod³o siê!","Ostrze¿enie",MB_ICONEXCLAMATION);
             }
+            if(hMyHook!=NULL)
+            {
+                MessageBox(0,"Hook","",0);
+                if(UnhookWindowsHook(WH_KEYBOARD, proc))
+                {
+                    MessageBox(0,"Unhook OK :)","",0);
+                }
+            }
+            if(proc!=NULL)
+            {
+                MessageBox(0,"Proc","",0);
+                FreeProcInstance(proc);
+            }
             PostQuitMessage(0);
             break;
         default:
@@ -314,7 +344,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-BOOL _export FAR PASCAL DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+// BOOL _export FAR PASCAL DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch(msg)
     {
@@ -335,4 +366,20 @@ BOOL _export FAR PASCAL DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             return FALSE;
     }
     return TRUE;
+}
+
+LRESULT CALLBACK ReturnProc(int code, WPARAM wParam, LPARAM lParam)
+{
+    if(code<0)
+    {
+        return CallNextHookEx(0,code,wParam,lParam);
+    }
+    else
+    {
+        if(wParam == VK_RETURN)
+        {
+            MessageBox(0,"Enter!","",0);
+        }
+    }
+    return CallNextHookEx(0,code,wParam,lParam);
 }
