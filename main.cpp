@@ -134,7 +134,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     SetWindowPos(hListBox,NULL,320,5,150,150,SWP_NOZORDER);
 
-    hListBox2 =CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_AUTOVSCROLL | LBS_NOTIFY,
+    hListBox2 =CreateWindow("LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_AUTOVSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
                             320, 155, 150, 150, hwnd, (HMENU)ID_LISTBOX2, hInstance, NULL);
 
     SetWindowPos(hListBox2,NULL,320,155,150,150,SWP_NOZORDER);
@@ -270,7 +270,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     break;
                 case ID_PLIK_ZAKONCZ:
                     DestroyWindow(hwnd);
-                    //PostQuitMessage(0);
                     break;
                 case ID_POMOC_O:
                     MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc);
@@ -328,12 +327,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                     break;
                 case ID_PRZYCISK4:
-                /*
-                    HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
-                    FARPROC proc=MakeProcInstance((FARPROC)DlgProc, instHandle);
-                    int ret=DialogBox(instHandle, MAKEINTRESOURCE(IDD_DIALOG1), hwnd, (DLGPROC)proc);
-                    ShowInteger(ret);
-                */
                     ShowInteger(MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc));
                     break;
             }
