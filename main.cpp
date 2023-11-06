@@ -10,30 +10,30 @@
 #define BST_UNCHECKED       0x0000
 #define BST_CHECKED         0x0001
 
-#define ID_PRZYCISK1    501
-#define ID_PRZYCISK2    502
-#define ID_CHECKBOX     503
-#define ID_LISTBOX      504
-#define ID_PRZYCISK3    505
-#define ID_EDITBOX      506
-#define ID_LISTBOX2     507
-#define ID_PRZYCISK4    508
-#define ID_COMBOBOX     509
-#define ID_EDITBOX2     510
-#define ID_PRZYCISK5    511
-#define ID_PRZYCISK6    512
-#define ID_STATIC       513
-#define ID_STATIC2      514
-#define ID_PRZYCISK7    515
+#define ID_BUTTON1          501
+#define ID_BUTTON2          502
+#define ID_CHECKBOX         503
+#define ID_LISTBOX          504
+#define ID_BUTTON3          505
+#define ID_EDITBOX          506
+#define ID_LISTBOX2         507
+#define ID_BUTTON4          508
+#define ID_COMBOBOX         509
+#define ID_EDITBOX2         510
+#define ID_BUTTON5          511
+#define ID_BUTTON6          512
+#define ID_STATIC           513
+#define ID_STATIC2          514
+#define ID_BUTTON7          515
 
-LPSTR NazwaKlasy2 = "Klasa Okienka 2";
+LPSTR ClassName2 = "Klasa Okienka 2";
 
 char buffer[65536];
 
 typedef struct secondWindow
 {
     HWND hwnd;
-    HWND hPrzycisk, hPrzycisk2;
+    HWND hButton, hButton2;
     unsigned long int id;
 } SECONDWINDOW;
 
@@ -58,7 +58,7 @@ HWND createSecondWindow(HWND hwnd, WINDOWMEMORY &winMem, unsigned long int id)
 
     HINSTANCE hInstance=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
 
-    secWin->hwnd = CreateWindow(NazwaKlasy2, "Oto okienko 2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
+    secWin->hwnd = CreateWindow(ClassName2, "Oto okienko 2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
                                 NULL, NULL, hInstance, NULL);
 
     if(secWin->hwnd==NULL)
@@ -71,11 +71,11 @@ HWND createSecondWindow(HWND hwnd, WINDOWMEMORY &winMem, unsigned long int id)
         winMem[secWin->hwnd]=secWin;
         secWin->id=id;
         
-        secWin->hPrzycisk =CreateWindow("BUTTON", "Test", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 5, 150, 30,
-                                        secWin->hwnd, (HMENU)ID_PRZYCISK5, hInstance, NULL);
+        secWin->hButton =CreateWindow("BUTTON", "Test", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 5, 150, 30,
+                                        secWin->hwnd, (HMENU)ID_BUTTON5, hInstance, NULL);
 
-        secWin->hPrzycisk2=CreateWindow("BUTTON", "Test 2", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 35, 150, 30,
-                                        secWin->hwnd, (HMENU)ID_PRZYCISK6, hInstance, NULL);
+        secWin->hButton2=CreateWindow("BUTTON", "Test 2", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 35, 150, 30,
+                                        secWin->hwnd, (HMENU)ID_BUTTON6, hInstance, NULL);
 
         ShowWindow(secWin->hwnd,SW_SHOW);
         UpdateWindow(secWin->hwnd);
@@ -122,7 +122,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // MessageBox(NULL,"Fender!","Test",MB_ICONINFORMATION | MB_OK);
 
     WNDCLASS wc = { 0 };
-    LPSTR NazwaKlasy = "Klasa Okienka";
+    LPSTR ClassName = "Klasa Okienka";
 
     wc.style = 0;
     wc.lpfnWndProc = WndProc;
@@ -135,7 +135,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wc.hbrBackground = g_hBrush;
     wc.lpszMenuName = /*NULL*/ MAKEINTRESOURCE(IDR_MENU1);
-    wc.lpszClassName = NazwaKlasy;
+    wc.lpszClassName = ClassName;
 
     if(!RegisterClass(&wc))
     {
@@ -145,11 +145,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     //HMENU hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MENU1));
 
-    // PIERWSZE OKNO
+    // FIRST WINDOW
 
     HWND hwnd;
 
-    hwnd = CreateWindow(NazwaKlasy, "Oto okienko", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
+    hwnd = CreateWindow(ClassName, "Oto okienko", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
                         NULL, /*hMenu*/NULL, hInstance, NULL);
 
     if(hwnd == NULL)
@@ -158,27 +158,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HWND hPrzycisk, hPrzycisk2, hPrzycisk3, hPrzycisk4, hPrzycisk9;
+    HWND hButton, hButton2, hButton3, hButton4, hButton9;
     HWND hCheckBox;
     HWND hStatic, hStatic2;
     HWND hText, hText2;
     HWND hListBox, hListBox2;
     HWND hCombo;
 
-    hPrzycisk = CreateWindow("BUTTON", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 5, 150, 30,
-                             hwnd, (HMENU)ID_PRZYCISK1, hInstance, NULL);
+    hButton = CreateWindow("BUTTON", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 5, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON1, hInstance, NULL);
 
-    hPrzycisk2 =CreateWindow("BUTTON", "Wyœwietl stan", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 35, 150, 30,
-                             hwnd, (HMENU)ID_PRZYCISK2, hInstance, NULL);
+    hButton2 =CreateWindow("BUTTON", "Wyœwietl stan", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 35, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON2, hInstance, NULL);
 
-    hPrzycisk3 =CreateWindow("BUTTON", "Wyœwietl wybrany", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 65, 150, 30,
-                             hwnd, (HMENU)ID_PRZYCISK3, hInstance, NULL);
+    hButton3 =CreateWindow("BUTTON", "Wyœwietl wybrany", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 65, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON3, hInstance, NULL);
 
-    hPrzycisk4 =CreateWindow("BUTTON", "Testowy", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 95, 150, 30,
-                             hwnd, (HMENU)ID_PRZYCISK4, hInstance, NULL);
+    hButton4 =CreateWindow("BUTTON", "Testowy", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 95, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON4, hInstance, NULL);
 
-    hPrzycisk9 =CreateWindow("BUTTON", "Utwórz okno", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 125, 150, 30,
-                             hwnd, (HMENU)ID_PRZYCISK7, hInstance, NULL);
+    hButton9 =CreateWindow("BUTTON", "Utwórz okno", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 125, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON7, hInstance, NULL);
 
     hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
                          5, 5, 150, 150, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
@@ -209,9 +209,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 1");
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 2");
 
-    std::string testowy="Eksperyment";
+    std::string testString="Eksperyment";
 
-    SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)testowy.c_str());
+    SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)testString.c_str());
 
     SendMessage(hText2, EM_SETPASSWORDCHAR, 0x95, 0);
 
@@ -222,9 +222,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         Ctl3dSubclassDlg(hwnd,ctlRegs);
         
         /*
-        Ctl3dSubclassCtl(hPrzycisk);
-        Ctl3dSubclassCtl(hPrzycisk2);
-        Ctl3dSubclassCtl(hPrzycisk3);
+        Ctl3dSubclassCtl(hButton);
+        Ctl3dSubclassCtl(hButton2);
+        Ctl3dSubclassCtl(hButton3);
         
         Ctl3dSubclassCtl(hText);
         Ctl3dSubclassCtl(hCheckBox);
@@ -255,7 +255,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     ShowWindow(hwnd,nCmdShow);
     UpdateWindow(hwnd);
 
-    // PIERWSZE OKNO ^^^
+    // FIRST WINDOW ^^^
 
     HACCEL hAccel=LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATORS));
     if(!hAccel)
@@ -264,7 +264,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
     WNDCLASS wc2 = { 0 };
-    
 
     wc2.style = 0;
     wc2.lpfnWndProc = WndProc2;
@@ -277,7 +276,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // wc2.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wc2.hbrBackground = g_hBrush;
     wc2.lpszMenuName = NULL;
-    wc2.lpszClassName = NazwaKlasy2;
+    wc2.lpszClassName = ClassName2;
 
     if(!RegisterClass(&wc2))
     {
@@ -285,19 +284,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    MSG Komunikat;
+    MSG Message;
 
-    while(GetMessage(&Komunikat, NULL, 0, 0 ))
+    while(GetMessage(&Message, NULL, 0, 0 ))
     {
-        HWND temp=GetParent(Komunikat.hwnd);
+        HWND temp=GetParent(Message.hwnd);
         if(temp==NULL)
         {
-            temp=Komunikat.hwnd;
+            temp=Message.hwnd;
         }
-        if(!TranslateAccelerator(temp, hAccel, &Komunikat))
+        if(!TranslateAccelerator(temp, hAccel, &Message))
         {
-            TranslateMessage(&Komunikat);
-            DispatchMessage(&Komunikat);
+            TranslateMessage(&Message);
+            DispatchMessage(&Message);
         }
     }
     
@@ -357,22 +356,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 case ID_ACC_F1:
                     MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc);
                     break;
-                case ID_PLIK_ZAKONCZ:
+                case ID_FILE_EXIT:
                     DestroyWindow(hwnd);
                     break;
-                case ID_POMOC_O:
+                case ID_HELP_ABOUT:
                     MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc);
                     break;
-                case ID_PRZYCISK1:
-                    // Odczyt danych z pola tekstowego
-                    DWORD dlugosc = GetWindowTextLength(GetDlgItem(hwnd,ID_EDITBOX));
-                    LPSTR Bufor = (LPSTR)GlobalAlloc(GPTR, dlugosc+1);
-                    //GetWindowText(hText,Bufor,dlugosc+1);
-                    GetWindowText(GetDlgItem(hwnd,ID_EDITBOX),Bufor,dlugosc+1);
-                    MessageBox(hwnd,Bufor,"Pobrany tekst",MB_OK);
-                    GlobalFree((unsigned)Bufor);
+                case ID_BUTTON1:
+                    // Reading data from edit box
+                    DWORD length = GetWindowTextLength(GetDlgItem(hwnd,ID_EDITBOX));
+                    LPSTR addBuffer = (LPSTR)GlobalAlloc(GPTR, length+1);
+                    //GetWindowText(hText,addBuffer,length+1);
+                    GetWindowText(GetDlgItem(hwnd,ID_EDITBOX),addBuffer,length+1);
+                    MessageBox(hwnd,addBuffer,"Pobrany tekst",MB_OK);
+                    GlobalFree((unsigned)addBuffer);
                     break;
-                case ID_PRZYCISK2:
+                case ID_BUTTON2:
                     if(IsDlgButtonChecked(hwnd, ID_CHECKBOX))
                     {
                         MessageBox(hwnd,"Zaznaczony!","Stan",MB_ICONINFORMATION);
@@ -392,7 +391,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         CheckDlgButton(hwnd, ID_CHECKBOX, BST_CHECKED); // = 1
                     }
                     break;
-                case ID_PRZYCISK3:
+                case ID_BUTTON3:
                     long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
                     char test[10];
                     ltoa(index,test,10);
@@ -416,10 +415,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         // MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                     }
                     break;
-                case ID_PRZYCISK4:
+                case ID_BUTTON4:
                     ShowInteger(MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc));
                     break;
-                case ID_PRZYCISK7:
+                case ID_BUTTON7:
                     createSecondWindow(hwnd,winMem,0);
                     break;
             }
@@ -478,13 +477,13 @@ LRESULT CALLBACK WndProc2(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 case ID_ACC_TAB:
                     SetFocus(GetNextDlgTabItem(hwnd,GetFocus(),false));
                     break;
-                case ID_PRZYCISK5:
+                case ID_BUTTON5:
                     //ShowInteger(hwnd);
-                    SetWindowText(GetDlgItem(hwnd,ID_PRZYCISK5),"Pyk 1");
+                    SetWindowText(GetDlgItem(hwnd,ID_BUTTON5),"Pyk 1");
                     break;
-                case ID_PRZYCISK6:
+                case ID_BUTTON6:
                     //ShowInteger(hwnd);
-                    SetWindowText(GetDlgItem(hwnd,ID_PRZYCISK6),"Pyk 2");
+                    SetWindowText(GetDlgItem(hwnd,ID_BUTTON6),"Pyk 2");
                     break;
             }
             break;
