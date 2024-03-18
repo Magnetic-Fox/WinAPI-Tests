@@ -18,4 +18,6 @@
 #define ID_ACC_ALTF4                    22
 #define ID_ACC_F1                       23
 
+#define IDR_RCDATA1                     300
+
 #endif

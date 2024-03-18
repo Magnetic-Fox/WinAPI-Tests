@@ -13,7 +13,7 @@ BEGIN
             VALUE "FileVersion", "1.0\0"
             VALUE "FileDescription", "Testy WinAPI\0"
             VALUE "InternalName", "WinAPI_test.exe\0"
-            VALUE "LegalCopyright", "©2023 Magnetic-Fox\0"
+            VALUE "LegalCopyright", "©2023-2024 Magnetic-Fox\0"
             VALUE "LegalTrademarks", "WinAPI™\0"
             VALUE "OriginalFilename", "WinAPI_test.exe\0"
             VALUE "ProductName", "Testy WinAPI\0"
@@ -35,7 +35,7 @@ BEGIN
     PUSHBUTTON      "&Anuluj",IDCANCEL,130,24,50,14
     LTEXT           "Testy WinAPI",IDC_STATIC,40,7,45,8
     ICON            IDI_ICON1,IDC_STATIC,7,7,20,20
-    LTEXT           "©2023 Magnetic-Fox",IDC_STATIC,40,21,68,8
+    LTEXT           "©2023-2024 Magnetic-Fox",IDC_STATIC,40,21,90,8
 END
 
 IDI_ICON1 ICON DISCARDABLE "icon1.ico"
@@ -57,4 +57,12 @@ BEGIN
     BEGIN
         MENUITEM "&O programie\tF1", ID_HELP_ABOUT
     END
+END
+
+IDR_RCDATA1 RCDATA DISCARDABLE
+BEGIN
+    0x42, 0x65, 0x64, 0x7A, 0x69, 0x65, 0x20, 0x73,
+    0x6F, 0x62, 0x69, 0x65, 0x20, 0x74, 0x65, 0x73,
+    0x74, 0x6F, 0x77, 0x61, 0x20, 0x72, 0x7A, 0x65,
+    0x63, 0x7A, 0x00
 END
