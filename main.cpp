@@ -25,13 +25,13 @@
 #define ID_STATIC           513
 #define ID_STATIC2          514
 #define ID_BUTTON7          515
+#define ID_BUTTON8          516
 
 LPSTR ClassName2 = "Klasa Okienka 2";
 
 char buffer[65536];
 
-typedef struct secondWindow
-{
+typedef struct secondWindow {
     HWND hwnd;
     HWND hButton, hButton2;
     unsigned long int id;
@@ -52,8 +52,7 @@ LRESULT CALLBACK WndProc2(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
 // LRESULT CALLBACK ReturnProc(int, WPARAM, LPARAM);
 
-HWND createSecondWindow(HWND hwnd, WINDOWMEMORY &winMem, unsigned long int id)
-{
+HWND createSecondWindow(HWND hwnd, WINDOWMEMORY &winMem, unsigned long int id) {
     SECONDWINDOW *secWin=new SECONDWINDOW;
 
     HINSTANCE hInstance=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
@@ -61,13 +60,11 @@ HWND createSecondWindow(HWND hwnd, WINDOWMEMORY &winMem, unsigned long int id)
     secWin->hwnd = CreateWindow(ClassName2, "Oto okienko 2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
                                 NULL, NULL, hInstance, NULL);
 
-    if(secWin->hwnd==NULL)
-    {
+    if(secWin->hwnd==NULL) {
         delete secWin;
         return NULL;
     }
-    else
-    {
+    else {
         winMem[secWin->hwnd]=secWin;
         secWin->id=id;
         
@@ -84,23 +81,20 @@ HWND createSecondWindow(HWND hwnd, WINDOWMEMORY &winMem, unsigned long int id)
     }
 }
 
-void deleteWindow(WINDOWMEMORY &winMem, HWND hwnd)
-{
+void deleteWindow(WINDOWMEMORY &winMem, HWND hwnd) {
     delete winMem[hwnd];
     winMem.erase(hwnd);
     return;
 }
 
-void ShowInteger(long int integer)
-{
+void ShowInteger(long int integer) {
     char test[20];
     ltoa(integer,test,10);
     MessageBox(0,test,"ShowInteger",MB_OK);
     return;
 }
 
-long int inline MakeDialogBox(HWND hwnd, unsigned int type, void* procedure)
-{
+long int inline MakeDialogBox(HWND hwnd, unsigned int type, void* procedure) {
     long int result;
     HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
     FARPROC proc=MakeProcInstance((FARPROC)procedure, instHandle);
@@ -109,16 +103,14 @@ long int inline MakeDialogBox(HWND hwnd, unsigned int type, void* procedure)
     return result;
 }
 /*
-HHOOK inline MakeSetWindowsHook(HWND hwnd, FARPROC &proc, int hookType, void* procedure)
-{
+HHOOK inline MakeSetWindowsHook(HWND hwnd, FARPROC &proc, int hookType, void* procedure) {
     HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
     proc=MakeProcInstance((FARPROC)procedure, instHandle);
     return (HHOOK)(int)SetWindowsHook(hookType, (HOOKPROC)proc);
 }
 */
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     // MessageBox(NULL,"Fender!","Test",MB_ICONINFORMATION | MB_OK);
 
     WNDCLASS wc = { 0 };
@@ -137,8 +129,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wc.lpszMenuName = /*NULL*/ MAKEINTRESOURCE(IDR_MENU1);
     wc.lpszClassName = ClassName;
 
-    if(!RegisterClass(&wc))
-    {
+    if(!RegisterClass(&wc)) {
         MessageBox(NULL,"Nie uda³o siê utworzyæ klasy okna.","B³¹d",MB_ICONSTOP | MB_OK);
         return 1;
     }
@@ -152,13 +143,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     hwnd = CreateWindow(ClassName, "Oto okienko", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
                         NULL, /*hMenu*/NULL, hInstance, NULL);
 
-    if(hwnd == NULL)
-    {
+    if(hwnd == NULL) {
         MessageBox(NULL,"Nie uda³o siê wyœwietliæ okna.","B³¹d",MB_ICONSTOP | MB_OK);
         return 1;
     }
 
-    HWND hButton, hButton2, hButton3, hButton4, hButton9;
+    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10;
     HWND hCheckBox;
     HWND hStatic, hStatic2;
     HWND hText, hText2;
@@ -179,6 +169,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hButton9 =CreateWindow("BUTTON", "Utwórz okno", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 125, 150, 30,
                              hwnd, (HMENU)ID_BUTTON7, hInstance, NULL);
+
+    hButton10=CreateWindow("BUTTON", "Test 2", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 155, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON8, hInstance, NULL);
 
     hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
                          5, 5, 150, 150, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
@@ -215,8 +208,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     SendMessage(hText2, EM_SETPASSWORDCHAR, 0x95, 0);
 
-    if(Ctl3dRegister(hInstance) && Ctl3dEnabled())
-    {
+    if(Ctl3dRegister(hInstance) && Ctl3dEnabled()) {
         //unsigned int ctlRegs=(CTL3D_ALL) & ~(CTL3D_BUTTONS);
         unsigned int ctlRegs=CTL3D_ALL;
         Ctl3dSubclassDlg(hwnd,ctlRegs);
@@ -234,15 +226,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         */
         //Ctl3dAutoSubclass(hInstance);
     }
-    else
-    {
+    else {
         MessageBox(hwnd,"Zarejestrowanie CTL3D nie powiod³o siê!","Ostrze¿enie",MB_ICONEXCLAMATION);
     }
 
     SetWindowText(hStatic, "Test 2");
 
-    for(unsigned long int x=0; x<65536; ++x)
-    {
+    for(unsigned long int x=0; x<65536; ++x) {
         char test[10];
         ltoa(x,test,10);
         SendMessage(hListBox, LB_ADDSTRING, 0, (LPARAM) test);
@@ -258,8 +248,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // FIRST WINDOW ^^^
 
     HACCEL hAccel=LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATORS));
-    if(!hAccel)
-    {
+    if(!hAccel) {
         MessageBox(0,"Nie uda³o siê za³adowaæ akceleratorów!","B³¹d",0);
     }
 
@@ -278,23 +267,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wc2.lpszMenuName = NULL;
     wc2.lpszClassName = ClassName2;
 
-    if(!RegisterClass(&wc2))
-    {
+    if(!RegisterClass(&wc2)) {
         MessageBox(NULL,"Nie uda³o siê utworzyæ klasy okna.","B³¹d",MB_ICONSTOP | MB_OK);
         return 1;
     }
 
     MSG Message;
 
-    while(GetMessage(&Message, NULL, 0, 0 ))
-    {
+    while(GetMessage(&Message, NULL, 0, 0 )) {
         HWND temp=GetParent(Message.hwnd);
-        if(temp==NULL)
-        {
+        if(temp==NULL) {
             temp=Message.hwnd;
         }
-        if(!TranslateAccelerator(temp, hAccel, &Message))
-        {
+        if(!TranslateAccelerator(temp, hAccel, &Message)) {
             TranslateMessage(&Message);
             DispatchMessage(&Message);
         }
@@ -303,19 +288,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     return 0;
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch(msg)
-    {
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch(msg) {
         case WM_CTLCOLOR:
-            switch(HIWORD(lParam))
-            {
+            switch(HIWORD(lParam)) {
                 /*
                 case CTLCOLOR_STATIC:
                     HWND hCtl = (HWND)LOWORD(lParam);
                     HDC hDC = (HDC)wParam;
-                    if(hCtl == hStatic2)
-                    {
+                    if(hCtl == hStatic2) {
                         SetBkMode(hDC, TRANSPARENT);
                         return (LRESULT) g_hBrush;
                     }
@@ -332,8 +313,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             break;
         case WM_COMMAND:
-            switch(wParam)
-            {
+            switch(wParam) {
                 case ID_ACC_TAB:
                     /*
                     char testClass[5];
@@ -341,12 +321,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     if(strcasecmp(testClass,"EDIT")==0)
                     */
                     //MessageBox(0,"","",0);
-                    if(GetFocus()==GetDlgItem(hwnd,ID_EDITBOX))
-                    {
+                    if(GetFocus()==GetDlgItem(hwnd,ID_EDITBOX)) {
                         SendMessage(GetFocus(), WM_CHAR, VK_TAB, 0);
                     }
-                    else
-                    {
+                    else {
                         SetFocus(GetNextDlgTabItem(hwnd,GetFocus(),false));
                     }
                     break;
@@ -372,22 +350,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     GlobalFree((unsigned)addBuffer);
                     break;
                 case ID_BUTTON2:
-                    if(IsDlgButtonChecked(hwnd, ID_CHECKBOX))
-                    {
+                    if(IsDlgButtonChecked(hwnd, ID_CHECKBOX)) {
                         MessageBox(hwnd,"Zaznaczony!","Stan",MB_ICONINFORMATION);
                     }
-                    else
-                    {
+                    else {
                         MessageBox(hwnd,"Niezaznaczony!","Stan",MB_ICONINFORMATION);
                     }
                     break;
                 case ID_CHECKBOX:
-                    if(IsDlgButtonChecked(hwnd, ID_CHECKBOX))
-                    {
+                    if(IsDlgButtonChecked(hwnd, ID_CHECKBOX)) {
                         CheckDlgButton(hwnd, ID_CHECKBOX, BST_UNCHECKED); // = 0
                     }
-                    else
-                    {
+                    else {
                         CheckDlgButton(hwnd, ID_CHECKBOX, BST_CHECKED); // = 1
                     }
                     break;
@@ -398,16 +372,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                     break;
                 case ID_LISTBOX:
-                    if(HIWORD(lParam)==LBN_DBLCLK)
-                    {
+                    if(HIWORD(lParam)==LBN_DBLCLK) {
                         long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
                         char test[10];
                         ltoa(index,test,10);
                         MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                         // ShowInteger(index);
                     }
-                    if(HIWORD(lParam)==LBN_SELCHANGE)
-                    {
+                    if(HIWORD(lParam)==LBN_SELCHANGE) {
                         long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
                         char test[10];
                         ltoa(index,test,10);
@@ -420,6 +392,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     break;
                 case ID_BUTTON7:
                     createSecondWindow(hwnd,winMem,0);
+                    break;
+                case ID_BUTTON8:
+                    HINSTANCE hInstance = GetWindowWord(hwnd,GWW_HINSTANCE);
+                    HGLOBAL hMem = LoadResource(hInstance,FindResource(hInstance,MAKEINTRESOURCE(IDR_RCDATA1),RT_RCDATA));
+                    /*
+                        // may be like that:
+                        void *lpData = LockResource(hMem);
+                        WORD *test2 = (WORD*)lpData;
+                    */
+                    WORD *test2 = (WORD*)LockResource(hMem);
+                    char test3[256];
+                    unsigned int x=0;
+                    while(test2[x]) {
+                        test3[x]=(char)test2[x];
+                        ++x;
+                    }
+                    test3[x]=0;
+                    MessageBox(hwnd,(const char*)test3,"Test 2",MB_OK);
+                    UnlockResource(hMem);
+                    FreeResource(hMem);
                     break;
             }
             break;
@@ -436,21 +428,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hwnd);
             break;
         case WM_DESTROY:
-            if(Ctl3dEnabled() && (!Ctl3dUnregister(GetWindowWord(hwnd,GWW_HINSTANCE))))
-            {
+            if(Ctl3dEnabled() && (!Ctl3dUnregister(GetWindowWord(hwnd,GWW_HINSTANCE)))) {
                 MessageBox(0,"Wyrejestrowanie aplikacji z CTL3D nie powiod³o siê!","Ostrze¿enie",MB_ICONEXCLAMATION);
             }
             /*
-            if(hMyHook!=NULL)
-            {
+            if(hMyHook!=NULL) {
                 MessageBox(0,"Hook","",0);
-                if(UnhookWindowsHook(WH_KEYBOARD, proc))
-                {
+                if(UnhookWindowsHook(WH_KEYBOARD, proc)) {
                     MessageBox(0,"Unhook OK :)","",0);
                 }
             }
-            if(proc!=NULL)
-            {
+            if(proc!=NULL) {
                 MessageBox(0,"Proc","",0);
                 FreeProcInstance(proc);
             }
@@ -464,16 +452,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-LRESULT CALLBACK WndProc2(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch(msg)
-    {
+LRESULT CALLBACK WndProc2(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch(msg) {
         case WM_CLOSE:
             DestroyWindow(hwnd);
             break;
         case WM_COMMAND:
-            switch(wParam)
-            {
+            switch(wParam) {
                 case ID_ACC_TAB:
                     SetFocus(GetNextDlgTabItem(hwnd,GetFocus(),false));
                     break;
@@ -497,28 +482,23 @@ LRESULT CALLBACK WndProc2(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // BOOL _export FAR PASCAL DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch(msg)
-    {
+BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch(msg) {
         case WM_INITDIALOG:
-            if(Ctl3dEnabled())
-            {
+            if(Ctl3dEnabled()) {
                 unsigned int ctlRegs=CTL3D_ALL;
                 Ctl3dSubclassDlg(hwnd,ctlRegs);
             }
             break;
         case WM_CTLCOLOR:
-            switch(HIWORD(lParam))
-            {
+            switch(HIWORD(lParam)) {
                 case CTLCOLOR_BTN:
                     SetBkMode((HDC)wParam, TRANSPARENT);
                     break;
             }
             break;
         case WM_COMMAND:
-            switch(wParam)
-            {
+            switch(wParam) {
                 case IDOK:
                     EndDialog(hwnd,IDOK);
                     break;
@@ -533,16 +513,12 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return TRUE;
 }
 /*
-LRESULT CALLBACK ReturnProc(int code, WPARAM wParam, LPARAM lParam)
-{
-    if(code<0)
-    {
+LRESULT CALLBACK ReturnProc(int code, WPARAM wParam, LPARAM lParam) {
+    if(code<0) {
         return CallNextHookEx(0,code,wParam,lParam);
     }
-    else
-    {
-        if(wParam == VK_RETURN)
-        {
+    else {
+        if(wParam == VK_RETURN) {
             MessageBox(0,"Enter!","",0);
         }
     }
