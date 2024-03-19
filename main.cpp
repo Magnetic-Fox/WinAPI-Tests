@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <olenls.h>
 #include <ctl3d.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,6 +27,7 @@
 #define ID_STATIC2          514
 #define ID_BUTTON7          515
 #define ID_BUTTON8          516
+#define ID_BUTTON9          517
 
 LPSTR ClassName2 = "Klasa Okienka 2";
 
@@ -148,7 +150,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10;
+    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11;
     HWND hCheckBox;
     HWND hStatic, hStatic2;
     HWND hText, hText2;
@@ -172,6 +174,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hButton10=CreateWindow("BUTTON", "Test 2", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 155, 150, 30,
                              hwnd, (HMENU)ID_BUTTON8, hInstance, NULL);
+
+    hButton11=CreateWindow("BUTTON", "Test 3", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 185, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON9, hInstance, NULL);
 
     hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
                          5, 5, 150, 150, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
@@ -412,6 +417,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     MessageBox(hwnd,(const char*)test3,"Test 2",MB_OK);
                     UnlockResource(hMem);
                     FreeResource(hMem);
+                    break;
+                case ID_BUTTON9:
+                    char test4[256];
+                    if(GetLocaleInfoA(LOCALE_USER_DEFAULT,LOCALE_IDEFAULTANSICODEPAGE,test4,256)) {
+                        MessageBox(hwnd,(const char*)test4,"Test 3",MB_OK);
+                    }
+                    if(GetLocaleInfoA(LOCALE_USER_DEFAULT,LOCALE_SABBREVLANGNAME,test4,256)) {
+                        MessageBox(hwnd,(const char*)test4,"Test 3",MB_OK);
+                    }
                     break;
             }
             break;
