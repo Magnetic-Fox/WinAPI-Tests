@@ -66,3 +66,10 @@ BEGIN
     0x74, 0x6F, 0x77, 0x61, 0x20, 0x72, 0x7A, 0x65,
     0x63, 0x7A, 0x00
 END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_STRING1             "Pierwszy string"
+    IDS_STRING2             "Drugi string"
+    IDS_STRING3             "No co? Testujemy, nie? ;-)"
+END
