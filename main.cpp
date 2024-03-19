@@ -28,6 +28,7 @@
 #define ID_BUTTON7          515
 #define ID_BUTTON8          516
 #define ID_BUTTON9          517
+#define ID_BUTTON10         518
 
 LPSTR ClassName2 = "Klasa Okienka 2";
 
@@ -150,7 +151,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11;
+    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12;
     HWND hCheckBox;
     HWND hStatic, hStatic2;
     HWND hText, hText2;
@@ -177,6 +178,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hButton11=CreateWindow("BUTTON", "Test 3", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 185, 150, 30,
                              hwnd, (HMENU)ID_BUTTON9, hInstance, NULL);
+
+    hButton12=CreateWindow("BUTTON", "Test 4", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 215, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON10, hInstance, NULL);
 
     hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
                          5, 5, 150, 150, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
@@ -425,6 +429,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     if(GetLocaleInfoA(LOCALE_USER_DEFAULT,LOCALE_SABBREVLANGNAME,test4,256)) {
                         MessageBox(hwnd,(const char*)test4,"Test 3",MB_OK);
+                    }
+                    break;
+                case ID_BUTTON10:
+                    char test5[256];
+                    HINSTANCE hInstance2=GetWindowWord(hwnd,GWW_HINSTANCE);
+                    if(LoadString(hInstance2,IDS_STRING1,test5,256)) {
+                        MessageBox(hwnd,(const char*)test5,"Test 4",MB_OK);
+                    }
+                    if(LoadString(hInstance2,IDS_STRING2,test5,256)) {
+                        MessageBox(hwnd,(const char*)test5,"Test 4",MB_OK);
+                    }
+                    if(LoadString(hInstance2,IDS_STRING3,test5,256)) {
+                        MessageBox(hwnd,(const char*)test5,"Test 4",MB_OK);
                     }
                     break;
             }
