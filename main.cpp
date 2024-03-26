@@ -477,6 +477,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             DeleteObject(g_hBrush);
             PostQuitMessage(0);
             break;
+        case WM_GETMINMAXINFO:
+            MINMAXINFO *lpMMI=(MINMAXINFO*)lParam;
+            // Minimum size
+            lpMMI->ptMinTrackSize.x=320;
+            lpMMI->ptMinTrackSize.y=240;
+            // Maximum size
+            lpMMI->ptMaxTrackSize.x=800;
+            lpMMI->ptMaxTrackSize.y=600;
+            break;
         default:
             return DefWindowProc(hwnd,msg,wParam,lParam);
     }
