@@ -5,6 +5,7 @@
 #include <string.h>
 #include <string>
 #include <map>
+#include <direct.h>
 
 #include "resources.h"
 
@@ -30,6 +31,7 @@
 #define ID_BUTTON9          517
 #define ID_BUTTON10         518
 #define ID_BUTTON11         519
+#define ID_BUTTON12         520
 
 LPSTR ClassName2 = "Klasa Okienka 2";
 
@@ -152,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12, hButton13;
+    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12, hButton13, hButton14;
     HWND hCheckBox;
     HWND hStatic, hStatic2;
     HWND hText, hText2;
@@ -185,6 +187,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hButton13=CreateWindow("BUTTON", "Test 5", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 245, 150, 30,
                              hwnd, (HMENU)ID_BUTTON11, hInstance, NULL);
+
+    hButton14=CreateWindow("BUTTON", "Test 6", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 275, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON12, hInstance, NULL);
 
     hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
                          5, 5, 150, 150, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
@@ -456,6 +461,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     OemToAnsi(testowy2,testowy3);
                     MessageBox(hwnd,(const char*)testowy2,"Test 5",MB_OK);
                     MessageBox(hwnd,(const char*)testowy3,"Test 5",MB_OK);
+                    break;
+                case ID_BUTTON12:
+                    DIR *test6=opendir("C:\\*.BAT");
+                    while(test6=readdir(test6)) {
+                        MessageBox(hwnd,(const char*)test6->d_name,"Test 6",MB_OK);
+                    }
+                    closedir(test6);
                     break;
             }
             break;
