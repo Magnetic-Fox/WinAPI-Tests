@@ -32,6 +32,7 @@
 #define ID_BUTTON10         518
 #define ID_BUTTON11         519
 #define ID_BUTTON12         520
+#define ID_BUTTON13         521
 
 LPSTR ClassName2 = "Klasa Okienka 2";
 
@@ -154,7 +155,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12, hButton13, hButton14;
+    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12, hButton13, hButton14, hButton15;
     HWND hCheckBox;
     HWND hStatic, hStatic2;
     HWND hText, hText2;
@@ -190,6 +191,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hButton14=CreateWindow("BUTTON", "Test 6", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 275, 150, 30,
                              hwnd, (HMENU)ID_BUTTON12, hInstance, NULL);
+
+    hButton15=CreateWindow("BUTTON", "Test 7", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 305, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON13, hInstance, NULL);
 
     hText = CreateWindow("EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
                          5, 5, 150, 150, hwnd, (HMENU)ID_EDITBOX, hInstance, NULL);
@@ -303,11 +307,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         }
     }
     
-    return 0;
+    return Message.wParam;
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch(msg) {
+        case WM_RBUTTONUP:
+            POINT point;
+            point.x=LOWORD(lParam);
+            point.y=HIWORD(lParam);
+            ClientToScreen(hwnd, &point);
+            TrackPopupMenu(GetSubMenu(LoadMenu(GetWindowWord(hwnd,GWW_HINSTANCE),MAKEINTRESOURCE(IDR_MENU1)),0),0,point.x,point.y,0,hwnd,NULL);
+            break;
         case WM_CTLCOLOR:
             switch(HIWORD(lParam)) {
                 /*
@@ -468,6 +479,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         MessageBox(hwnd,(const char*)test6->d_name,"Test 6",MB_OK);
                     }
                     closedir(test6);
+                    break;
+                case ID_BUTTON13:
+                    HWND test7=CreateWindowEx(WS_EX_TOPMOST, "SysTabControl32", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 335, 150, 30,
+                                            hwnd, (HMENU)ID_BUTTON13, hInstance, NULL);
+                    ShowInteger(test7);
                     break;
             }
             break;
