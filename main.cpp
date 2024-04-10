@@ -312,6 +312,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch(msg) {
+        // main window popup menu
         case WM_RBUTTONUP:
             POINT point;
             point.x=LOWORD(lParam);
