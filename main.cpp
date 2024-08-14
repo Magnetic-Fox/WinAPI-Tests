@@ -37,7 +37,7 @@
 LPSTR ClassName2 = "Klasa Okienka 2";
 
 char buffer[65536];
-unsigned int selected[1024];
+//unsigned int selected[1024];
 
 typedef struct secondWindow {
     HWND hwnd;
@@ -398,7 +398,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     break;
                 case ID_BUTTON3:
                     unsigned long int selCount=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELCOUNT, 0, 0);
-                    unsigned int itemsInBuffer=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELITEMS, 1024, (LPARAM)selected);
+                    unsigned int *selected=NULL;
+                    unsigned int selSize=0;
+                    if((selCount<=65535) && (selCount>0)) {
+                        selected=new unsigned int[selCount];
+                        if(selected==NULL) {
+                            selSize=0;
+                        }
+                        else {
+                            selSize=selCount;
+                        }
+                    }
+                    unsigned int itemsInBuffer=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELITEMS, selSize, (LPARAM)selected);
                     if(selCount==0) {
                         MessageBox(hwnd,"Niczego nie wybrano!","B³¹d",MB_ICONHAND);
                     }
@@ -412,6 +423,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                                 ShowInteger(selected[x]);
                             }
                         }
+                    }
+                    if(selected!=NULL) {
+                        delete[] selected;
                     }
                     break;
                 case ID_LISTBOX:
