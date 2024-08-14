@@ -37,6 +37,7 @@
 LPSTR ClassName2 = "Klasa Okienka 2";
 
 char buffer[65536];
+unsigned int selected[1024];
 
 typedef struct secondWindow {
     HWND hwnd;
@@ -168,7 +169,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     hButton2 =CreateWindow("BUTTON", "Wyœwietl stan", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 35, 150, 30,
                              hwnd, (HMENU)ID_BUTTON2, hInstance, NULL);
 
-    hButton3 =CreateWindow("BUTTON", "Wyœwietl wybrany", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 65, 150, 30,
+    hButton3 =CreateWindow("BUTTON", "Wyœwietl wybrane", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 65, 150, 30,
                              hwnd, (HMENU)ID_BUTTON3, hInstance, NULL);
 
     hButton4 =CreateWindow("BUTTON", "Testowy", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 95, 150, 30,
@@ -396,18 +397,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     break;
                 case ID_BUTTON3:
-                    long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
-                    char test[10];
-                    ltoa(index,test,10);
-                    MessageBox(hwnd,test,"Wartoœæ",MB_OK);
+                    unsigned long int selCount=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELCOUNT, 0, 0);
+                    unsigned int itemsInBuffer=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELITEMS, 1024, (LPARAM)selected);
+                    if(selCount==0) {
+                        MessageBox(hwnd,"Niczego nie wybrano!","B³¹d",MB_ICONHAND);
+                    }
+                    else {
+                        if(selCount>itemsInBuffer) {
+                            MessageBox(hwnd,"Za du¿o wybranych elementów!","B³¹d",MB_ICONHAND);
+                        }
+                        else {
+                            unsigned int x=0;
+                            for(x=0; x<itemsInBuffer; ++x) {
+                                ShowInteger(selected[x]);
+                            }
+                        }
+                    }
                     break;
                 case ID_LISTBOX:
                     if(HIWORD(lParam)==LBN_DBLCLK) {
-                        long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
-                        char test[10];
-                        ltoa(index,test,10);
-                        MessageBox(hwnd,test,"Wartoœæ",MB_OK);
+                        // long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
+                        // char test[10];
+                        // ltoa(index,test,10);
+                        // MessageBox(hwnd,test,"Wartoœæ",MB_OK);
                         // ShowInteger(index);
+                        SendMessage(hwnd, WM_COMMAND, ID_BUTTON3, 0);
                     }
                     if(HIWORD(lParam)==LBN_SELCHANGE) {
                         long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
@@ -483,7 +497,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     break;
                 case ID_BUTTON13:
                     HWND test7=CreateWindowEx(WS_EX_TOPMOST, "SysTabControl32", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 335, 150, 30,
-                                            hwnd, (HMENU)ID_BUTTON13, hInstance, NULL);
+                                              hwnd, (HMENU)ID_BUTTON13, hInstance, NULL);
                     ShowInteger(test7);
                     break;
             }
