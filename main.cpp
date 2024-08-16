@@ -6,6 +6,9 @@
 #include <string>
 #include <map>
 #include <direct.h>
+#include <fstream>
+#include <time.h>
+#include <utime.h>
 
 #include "resources.h"
 
@@ -510,9 +513,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     closedir(test6);
                     break;
                 case ID_BUTTON13:
+                    /* Old tests...
                     HWND test7=CreateWindowEx(WS_EX_TOPMOST, "SysTabControl32", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 335, 150, 30,
                                               hwnd, (HMENU)ID_BUTTON13, hInstance, NULL);
                     ShowInteger(test7);
+                    */
+                    char testText[]="Robiê prosty eksperyment";
+                    std::ofstream myFile;
+                    myFile.open("test.txt",std::ios::out | std::ios::binary);
+                    myFile.write(testText,24);
+                    myFile.close();
+                    struct tm time={0};
+                    time.tm_year=2024-1900;
+                    time.tm_mon=8-1;
+                    time.tm_mday=16;
+                    time.tm_hour=11;
+                    time.tm_min=22;
+                    time.tm_sec=33;
+                    time.tm_isdst=-1;
+                    char buffer[256];
+                    timezone=0;
+                    time_t test=mktime(&time);
+                    struct utimbuf new_times;
+                    new_times.actime=test;
+                    new_times.modtime=test;
+                    utime("test.txt",&new_times);
+                    strftime(buffer,256,"%d/%m/%Y %H:%M:%S %z",&time);
+                    MessageBox(hwnd,buffer,"Test",MB_OK);
+                    ShowInteger(test);
                     break;
             }
             break;
