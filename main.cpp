@@ -531,13 +531,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     time.tm_min=22;
                     time.tm_sec=33;
                     time.tm_isdst=-1;
-                    char buffer[256];
-                    timezone=0;
+                    timezone=0; // ugly, but makes everything work properly...
                     time_t test=mktime(&time);
                     struct utimbuf new_times;
                     new_times.actime=test;
                     new_times.modtime=test;
                     utime("test.txt",&new_times);
+                    char buffer[256];
                     strftime(buffer,256,"%d/%m/%Y %H:%M:%S %z",&time);
                     MessageBox(hwnd,buffer,"Test",MB_OK);
                     ShowInteger(test);
