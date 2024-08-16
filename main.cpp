@@ -314,6 +314,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     return Message.wParam;
 }
 
+void applyModificationDate(char *filename, unsigned int year, unsigned short int month, unsigned short int day, unsigned short int hour, unsigned short int minute, unsigned short int second) {
+    struct tm time=         {0};
+    struct utimbuf newTimes={0};
+    time_t preparedTime=     0 ;
+    
+    time.tm_year=   year-1900;
+    time.tm_mon=    month-1;
+    time.tm_mday=   day;
+    time.tm_hour=   hour;
+    time.tm_min=    minute;
+    time.tm_sec=    second;
+    time.tm_isdst=  -1;
+    
+    timezone=0; // ugly cheat, but it makes everything work properly...
+    
+    preparedTime=    mktime(&time);
+    newTimes.actime= preparedTime;
+    newTimes.modtime=preparedTime;
+    
+    utime(filename,&newTimes);
+    
+    return;
+}
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch(msg) {
         // main window popup menu
@@ -513,34 +537,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     closedir(test6);
                     break;
                 case ID_BUTTON13:
-                    /* Old tests...
-                    HWND test7=CreateWindowEx(WS_EX_TOPMOST, "SysTabControl32", "Wyœwietl tekst", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 335, 150, 30,
-                                              hwnd, (HMENU)ID_BUTTON13, hInstance, NULL);
-                    ShowInteger(test7);
-                    */
                     char testText[]="Robiê prosty eksperyment";
                     std::ofstream myFile;
                     myFile.open("test.txt",std::ios::out | std::ios::binary);
                     myFile.write(testText,24);
                     myFile.close();
-                    struct tm time={0};
-                    time.tm_year=2024-1900;
-                    time.tm_mon=8-1;
-                    time.tm_mday=16;
-                    time.tm_hour=11;
-                    time.tm_min=22;
-                    time.tm_sec=33;
-                    time.tm_isdst=-1;
-                    timezone=0; // ugly, but makes everything work properly...
-                    time_t test=mktime(&time);
-                    struct utimbuf new_times;
-                    new_times.actime=test;
-                    new_times.modtime=test;
-                    utime("test.txt",&new_times);
-                    char buffer[256];
-                    strftime(buffer,256,"%d/%m/%Y %H:%M:%S %z",&time);
-                    MessageBox(hwnd,buffer,"Test",MB_OK);
-                    ShowInteger(test);
+                    applyModificationDate("test.txt",2020,7,1,14,15,16);
                     break;
             }
             break;
