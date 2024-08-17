@@ -602,6 +602,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             }
             */
             DeleteObject(g_hBrush);
+            DeleteObject(g_hBrush2);
             PostQuitMessage(0);
             break;
         case WM_GETMINMAXINFO:
