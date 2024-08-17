@@ -36,6 +36,7 @@
 #define ID_BUTTON11         519
 #define ID_BUTTON12         520
 #define ID_BUTTON13         521
+#define ID_STATIC3          522
 
 LPSTR ClassName2 = "Klasa Okienka 2";
 
@@ -51,8 +52,11 @@ typedef struct secondWindow {
 typedef std::map<HWND,SECONDWINDOW*> WINDOWMEMORY;
 
 HBRUSH g_hBrush = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
+HBRUSH g_hBrush2= CreateSolidBrush(GetSysColor(COLOR_ACTIVECAPTION));
 
 WINDOWMEMORY winMem;
+
+unsigned int progress=0;
 
 //HHOOK hMyHook=NULL;
 // FARPROC proc=NULL;
@@ -103,6 +107,12 @@ void ShowInteger(long int integer) {
     ltoa(integer,test,10);
     MessageBox(0,test,"ShowInteger",MB_OK);
     return;
+}
+
+std::string IntToStr(long int integer) { // another function, written in hurry
+    char test[20];
+    ltoa(integer,test,10);
+    return (std::string)test;
 }
 
 long int inline MakeDialogBox(HWND hwnd, unsigned int type, void* procedure) {
@@ -161,7 +171,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12, hButton13, hButton14, hButton15;
     HWND hCheckBox;
-    HWND hStatic, hStatic2;
+    HWND hStatic, hStatic2, hStatic3, hStatic4;
     HWND hText, hText2;
     HWND hListBox, hListBox2;
     HWND hCombo;
@@ -224,6 +234,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hCombo =CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | CBS_DROPDOWNLIST | CBS_HASSTRINGS,
                          320, 344, 150, 124, hwnd, (HMENU)ID_COMBOBOX, hInstance, NULL);
+
+    hStatic4=CreateWindow("STATIC", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 160, 335, 150, 18, hwnd, NULL, hInstance, NULL);
+
+    hStatic3=CreateWindow("STATIC", (char*)(IntToStr(progress)+"%").c_str(), WS_CHILD | WS_VISIBLE | DT_CENTER, 161, 336, (unsigned int)(148*(progress/100.0)), 16, hwnd, (HMENU)ID_STATIC3, hInstance, NULL);
 
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 1");
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 2");
@@ -340,6 +354,14 @@ void applyModificationDate(char *filename, unsigned int year, unsigned short int
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch(msg) {
+        case WM_LBUTTONUP:
+            ++progress;
+            if(progress>100) {
+                progress=100;
+            }
+            SetWindowText(GetDlgItem(hwnd,ID_STATIC3),(char*)(IntToStr(progress)+"%").c_str());
+            SetWindowPos(GetDlgItem(hwnd,ID_STATIC3),NULL,0,0,(unsigned int)(148*(progress/100.0)),16,SWP_NOMOVE | SWP_NOZORDER);
+            break;
         // main window popup menu
         case WM_RBUTTONUP:
             POINT point;
@@ -362,6 +384,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     break;
                 */
                 case CTLCOLOR_STATIC:
+                    if(LOWORD(lParam)==GetDlgItem(hwnd,ID_STATIC3)) {
+                        SetBkMode((HDC)wParam, TRANSPARENT);
+                        SetTextColor((HDC)wParam,GetSysColor(COLOR_CAPTIONTEXT));
+                        return g_hBrush2;
+                    }
                     SetBkMode((HDC)wParam, TRANSPARENT);
                     return g_hBrush;
                     // break;
