@@ -9,6 +9,7 @@
 #include <fstream>
 #include <time.h>
 #include <utime.h>
+#include <commdlg.h>
 
 #include "resources.h"
 
@@ -37,6 +38,7 @@
 #define ID_BUTTON12         520
 #define ID_BUTTON13         521
 #define ID_STATIC3          522
+#define ID_BUTTON14         523
 
 LPSTR ClassName2 = "Klasa Okienka 2";
 
@@ -169,7 +171,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 1;
     }
 
-    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12, hButton13, hButton14, hButton15;
+    HWND hButton, hButton2, hButton3, hButton4, hButton9, hButton10, hButton11, hButton12, hButton13, hButton14, hButton15, hButton16;
     HWND hCheckBox;
     HWND hStatic, hStatic2, hStatic3, hStatic4;
     HWND hText, hText2;
@@ -238,6 +240,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     hStatic4=CreateWindow("STATIC", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 160, 335, 150, 18, hwnd, NULL, hInstance, NULL);
 
     hStatic3=CreateWindow("STATIC", /*(char*)(IntToStr(progress)+"%").c_str()*/ NULL, WS_CHILD | WS_VISIBLE | DT_CENTER, 161, 336, (unsigned int)(148*(progress/100.0)), 16, hwnd, (HMENU)ID_STATIC3, hInstance, NULL);
+
+    hButton16=CreateWindow("BUTTON", "Test 8", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 160, 353, 150, 30,
+                             hwnd, (HMENU)ID_BUTTON14, hInstance, NULL);
 
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 1");
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 2");
@@ -587,6 +592,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     myFile.write(testText,24);
                     myFile.close();
                     applyModificationDate("test.txt",2020,7,1,14,15,16);
+                    break;
+                case ID_BUTTON14:
+                    OPENFILENAME ofn={0};
+                    ofn.lStructSize=sizeof(ofn);
+                    ofn.Flags=OFN_EXPLORER;
+                    GetSaveFileName(&ofn);
                     break;
             }
             break;
