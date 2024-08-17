@@ -380,7 +380,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     unsigned long int width;
     unsigned long int height;
     MINMAXINFO *lpMMI;
-    
+    // actual window procedure goes here...
     switch(msg) {
         case WM_LBUTTONUP:
             ++progress;
