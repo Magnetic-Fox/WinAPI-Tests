@@ -353,6 +353,34 @@ void applyModificationDate(char *filename, unsigned int year, unsigned short int
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    // yeah... that's huge amount of variables...
+    POINT point;
+    DWORD length;
+    LPSTR addBuffer;
+    unsigned long int selCount;
+    unsigned int *selected;
+    unsigned int selSize;
+    unsigned int itemsInBuffer;
+    long int index;
+    char test[10];
+    HINSTANCE hInstance;
+    HGLOBAL hMem;
+    WORD *test2;
+    char test3[256];
+    unsigned int x;
+    char test4[256];
+    char test5[256];
+    HINSTANCE hInstance2;
+    char testowy[]="£¹cznoœæ piêkna rzecz. ;)";
+    char testowy2[256];
+    char testowy3[256];
+    DIR *test6;
+    char testText[]="Robiê prosty eksperyment";
+    std::ofstream myFile;
+    unsigned long int width;
+    unsigned long int height;
+    MINMAXINFO *lpMMI;
+    
     switch(msg) {
         case WM_LBUTTONUP:
             ++progress;
@@ -364,7 +392,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
         // main window popup menu
         case WM_RBUTTONUP:
-            POINT point;
             point.x=LOWORD(lParam);
             point.y=HIWORD(lParam);
             ClientToScreen(hwnd, &point);
@@ -427,8 +454,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     break;
                 case ID_BUTTON1:
                     // Reading data from edit box
-                    DWORD length = GetWindowTextLength(GetDlgItem(hwnd,ID_EDITBOX));
-                    LPSTR addBuffer = (LPSTR)GlobalAlloc(GPTR, length+1);
+                    length = GetWindowTextLength(GetDlgItem(hwnd,ID_EDITBOX));
+                    addBuffer = (LPSTR)GlobalAlloc(GPTR, length+1);
                     //GetWindowText(hText,addBuffer,length+1);
                     GetWindowText(GetDlgItem(hwnd,ID_EDITBOX),addBuffer,length+1);
                     MessageBox(hwnd,addBuffer,"Pobrany tekst",MB_OK);
@@ -451,9 +478,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     break;
                 case ID_BUTTON3:
-                    unsigned long int selCount=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELCOUNT, 0, 0);
-                    unsigned int *selected=NULL;
-                    unsigned int selSize=0;
+                    selCount=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELCOUNT, 0, 0);
+                    selected=NULL;
+                    selSize=0;
                     if((selCount<=65535) && (selCount>0)) {
                         selected=new unsigned int[selCount];
                         if(selected==NULL) {
@@ -463,7 +490,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                             selSize=selCount;
                         }
                     }
-                    unsigned int itemsInBuffer=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELITEMS, selSize, (LPARAM)selected);
+                    itemsInBuffer=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETSELITEMS, selSize, (LPARAM)selected);
                     if(selCount==0) {
                         MessageBox(hwnd,"Niczego nie wybrano!","B³¹d",MB_ICONHAND);
                     }
@@ -472,8 +499,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                             MessageBox(hwnd,"Za du¿o wybranych elementów!","B³¹d",MB_ICONHAND);
                         }
                         else {
-                            unsigned int x=0;
-                            for(x=0; x<itemsInBuffer; ++x) {
+                            for(unsigned int x=0; x<itemsInBuffer; ++x) {
                                 ShowInteger(selected[x]);
                             }
                         }
@@ -481,7 +507,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     if(selected!=NULL) {
                         delete[] selected;
                     }
-                    break;
+                    break;                    
                 case ID_LISTBOX:
                     if(HIWORD(lParam)==LBN_DBLCLK) {
                         // long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
@@ -492,8 +518,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         SendMessage(hwnd, WM_COMMAND, ID_BUTTON3, 0);
                     }
                     if(HIWORD(lParam)==LBN_SELCHANGE) {
-                        long int index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
-                        char test[10];
+                        index=SendMessage(GetDlgItem(hwnd,ID_LISTBOX), LB_GETCURSEL, 0, 0);
                         ltoa(index,test,10);
                         SetWindowText(GetDlgItem(hwnd,ID_STATIC2),test);
                         // MessageBox(hwnd,test,"Wartoœæ",MB_OK);
@@ -506,16 +531,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     createSecondWindow(hwnd,winMem,0);
                     break;
                 case ID_BUTTON8:
-                    HINSTANCE hInstance = GetWindowWord(hwnd,GWW_HINSTANCE);
-                    HGLOBAL hMem = LoadResource(hInstance,FindResource(hInstance,MAKEINTRESOURCE(IDR_RCDATA1),RT_RCDATA));
+                    hInstance = GetWindowWord(hwnd,GWW_HINSTANCE);
+                    hMem = LoadResource(hInstance,FindResource(hInstance,MAKEINTRESOURCE(IDR_RCDATA1),RT_RCDATA));
                     /*
                         // may be like that:
                         void *lpData = LockResource(hMem);
                         WORD *test2 = (WORD*)lpData;
                     */
-                    WORD *test2 = (WORD*)LockResource(hMem);
-                    char test3[256];
-                    unsigned int x=0;
+                    test2 = (WORD*)LockResource(hMem);
+                    x=0;
                     while(test2[x]) {
                         test3[x]=(char)test2[x];
                         ++x;
@@ -524,9 +548,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     MessageBox(hwnd,(const char*)test3,"Test 2",MB_OK);
                     UnlockResource(hMem);
                     FreeResource(hMem);
-                    break;
+                    break;                    
                 case ID_BUTTON9:
-                    char test4[256];
                     if(GetLocaleInfoA(LOCALE_USER_DEFAULT,LOCALE_IDEFAULTANSICODEPAGE,test4,256)) {
                         MessageBox(hwnd,(const char*)test4,"Test 3",MB_OK);
                     }
@@ -535,8 +558,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     break;
                 case ID_BUTTON10:
-                    char test5[256];
-                    HINSTANCE hInstance2=GetWindowWord(hwnd,GWW_HINSTANCE);
+                    hInstance2=GetWindowWord(hwnd,GWW_HINSTANCE);
                     if(LoadString(hInstance2,IDS_STRING1,test5,256)) {
                         MessageBox(hwnd,(const char*)test5,"Test 4",MB_OK);
                     }
@@ -548,24 +570,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     break;
                 case ID_BUTTON11:
-                    char testowy[]="£¹cznoœæ piêkna rzecz. ;)";
-                    char testowy2[256];
-                    char testowy3[256];
                     AnsiToOem(testowy,testowy2);
                     OemToAnsi(testowy2,testowy3);
                     MessageBox(hwnd,(const char*)testowy2,"Test 5",MB_OK);
                     MessageBox(hwnd,(const char*)testowy3,"Test 5",MB_OK);
                     break;
                 case ID_BUTTON12:
-                    DIR *test6=opendir("C:\\*.BAT");
+                    test6=opendir("C:\\*.BAT");
                     while(test6=readdir(test6)) {
                         MessageBox(hwnd,(const char*)test6->d_name,"Test 6",MB_OK);
                     }
                     closedir(test6);
                     break;
                 case ID_BUTTON13:
-                    char testText[]="Robiê prosty eksperyment";
-                    std::ofstream myFile;
                     myFile.open("test.txt",std::ios::out | std::ios::binary);
                     myFile.write(testText,24);
                     myFile.close();
@@ -573,10 +590,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     break;
             }
             break;
-            
         case WM_SIZE:
-            unsigned long int width= LOWORD(lParam);
-            unsigned long int height=HIWORD(lParam);
+            width= LOWORD(lParam);
+            height=HIWORD(lParam);
             
             SetWindowPos(GetDlgItem(hwnd,ID_LISTBOX),NULL,0,0,width-482,height-276,SWP_NOMOVE | SWP_NOZORDER);
             
@@ -606,7 +622,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             PostQuitMessage(0);
             break;
         case WM_GETMINMAXINFO:
-            MINMAXINFO *lpMMI=(MINMAXINFO*)lParam;
+            lpMMI=(MINMAXINFO*)lParam;
             // Minimum size
             lpMMI->ptMinTrackSize.x=320;
             lpMMI->ptMinTrackSize.y=240;
