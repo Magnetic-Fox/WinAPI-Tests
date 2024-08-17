@@ -237,7 +237,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     hStatic4=CreateWindow("STATIC", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 160, 335, 150, 18, hwnd, NULL, hInstance, NULL);
 
-    hStatic3=CreateWindow("STATIC", (char*)(IntToStr(progress)+"%").c_str(), WS_CHILD | WS_VISIBLE | DT_CENTER, 161, 336, (unsigned int)(148*(progress/100.0)), 16, hwnd, (HMENU)ID_STATIC3, hInstance, NULL);
+    hStatic3=CreateWindow("STATIC", /*(char*)(IntToStr(progress)+"%").c_str()*/ NULL, WS_CHILD | WS_VISIBLE | DT_CENTER, 161, 336, (unsigned int)(148*(progress/100.0)), 16, hwnd, (HMENU)ID_STATIC3, hInstance, NULL);
 
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 1");
     SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM) "Test 2");
@@ -359,7 +359,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             if(progress>100) {
                 progress=100;
             }
-            SetWindowText(GetDlgItem(hwnd,ID_STATIC3),(char*)(IntToStr(progress)+"%").c_str());
+            //SetWindowText(GetDlgItem(hwnd,ID_STATIC3),(char*)(IntToStr(progress)+"%").c_str());
             SetWindowPos(GetDlgItem(hwnd,ID_STATIC3),NULL,0,0,(unsigned int)(148*(progress/100.0)),16,SWP_NOMOVE | SWP_NOZORDER);
             break;
         // main window popup menu
