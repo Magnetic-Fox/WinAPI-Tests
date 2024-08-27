@@ -385,6 +385,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     unsigned long int width;
     unsigned long int height;
     MINMAXINFO *lpMMI;
+    OPENFILENAME ofn={0};    
+    
     // actual window procedure goes here...
     switch(msg) {
         case WM_LBUTTONUP:
@@ -594,10 +596,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     applyModificationDate("test.txt",2020,7,1,14,15,16);
                     break;
                 case ID_BUTTON14:
-                    OPENFILENAME ofn={0};
                     ofn.lStructSize=sizeof(ofn);
-                    ofn.Flags=OFN_EXPLORER;
-                    GetSaveFileName(&ofn);
+                    ofn.hwndOwner=hwnd;
+                    ofn.lpstrFilter="Pliki tekstowe (*.txt)\0*.txt\0Wszystkie pliki\0*.*\0";
+                    ofn.nMaxFile=256;
+                    memset(testowy3,0,256); // THIS IS VERY IMPORTANT!
+                    ofn.lpstrFile=testowy3;
+                    ofn.lpstrDefExt="txt";
+                    ofn.Flags=OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST;
+                    if(GetOpenFileName(&ofn)) {
+                        MessageBox(hwnd,testowy3,"Test",MB_OK);
+                        for(unsigned int x=0; x<256; ++x) {
+                            if(testowy3[x]==0x20) {
+                                ShowInteger(x+1);   // position of the first character of file name (when multi)
+                            }
+                            if(testowy3[x]==0x00) {
+                                break;
+                            }
+                        }
+                    }
                     break;
             }
             break;
