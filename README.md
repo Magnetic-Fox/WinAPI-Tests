@@ -2,6 +2,9 @@
 
 This repository contains my first real experiments with programing whole program using 16-bit Windows API.
 
+## Important note
+**This repository contains very simple experiments only!** If You like to see something more advanced (at least a bit), take a look at my much bigger project called [SimpleNoter](https://github.com/Magnetic-Fox/SimpleNoter). I think it's much more representative. ;)
+
 ## What is included in this repo?
 
 Simple C++ project, being experiment with 16-bit Windows API made to understand how to create simple Windows applications without any Rapid Application Development IDEs such as Delphi, Lazarus or Visual Studio.
