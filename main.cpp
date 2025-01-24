@@ -125,6 +125,16 @@ long int inline MakeDialogBox(HWND hwnd, unsigned int type, void* procedure) {
     FreeProcInstance(proc);
     return result;
 }
+
+long int inline MakeDialogBoxParam(HWND hwnd, unsigned int type, void* procedure, LPARAM parameter) {
+    long int result;
+    HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
+    FARPROC proc=MakeProcInstance((FARPROC)procedure, instHandle);
+    result=DialogBoxParam(instHandle, MAKEINTRESOURCE(type), hwnd, (DLGPROC)proc, parameter);
+    FreeProcInstance(proc);
+    return result;
+}
+
 /*
 HHOOK inline MakeSetWindowsHook(HWND hwnd, FARPROC &proc, int hookType, void* procedure) {
     HANDLE instHandle=(HINSTANCE)GetWindowWord(hwnd,GWW_HINSTANCE);
@@ -532,7 +542,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     break;
                 case ID_BUTTON4:
-                    ShowInteger(MakeDialogBox(hwnd,IDD_DIALOG1,DlgProc));
+                    ShowInteger(MakeDialogBoxParam(hwnd,IDD_DIALOG1,DlgProc,1987));
                     break;
                 case ID_BUTTON7:
                     createSecondWindow(hwnd,winMem,0);
@@ -697,6 +707,9 @@ LRESULT CALLBACK WndProc2(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch(msg) {
         case WM_INITDIALOG:
+            if(lParam!=0) {
+                ShowInteger(lParam);
+            }
             if(Ctl3dEnabled()) {
                 unsigned int ctlRegs=CTL3D_ALL;
                 Ctl3dSubclassDlg(hwnd,ctlRegs);
